@@ -1,0 +1,51 @@
+class Solution {
+public:
+    void parent(TreeNode* root,unordered_map<TreeNode*,TreeNode*>&parT){
+        if(root==NULL)return;
+        if(root->left){
+            parT[root->left]=root;
+            parent(root->left,parT);
+        }
+        if(root->right){
+            parT[root->right]=root;
+            parent(root->right,parT);
+        }
+    }
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+        unordered_map<TreeNode*,TreeNode*> parT;
+        parent(root,parT);
+        unordered_map<TreeNode*,int> vis;
+        queue<TreeNode*> q;
+        q.push(target);
+        int cur=0;
+        vis[target]=1;
+        while(!q.empty()){
+        int size=q.size();
+            
+            if(cur++==k)break;
+            while(size--){
+            TreeNode* tmp=q.front();q.pop();
+            if(tmp->left&&!vis[tmp->left]){
+                q.push(tmp->left);
+                vis[tmp->left]=1;
+            }  
+            if(tmp->right&&!vis[tmp->right]){
+                q.push(tmp->right);
+                vis[tmp->right]=1;
+            }  
+            if(parT[tmp]&&!vis[parT[tmp]]){
+                q.push(parT[tmp]);
+                vis[parT[tmp]]=1;
+            }    
+
+            }
+        }
+        vector<int> res;
+        while(!q.empty()){
+            TreeNode* cur=q.front();
+            q.pop();
+            res.push_back(cur->val);
+        }
+        return res;
+    }
+};
